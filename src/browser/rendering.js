@@ -47,7 +47,7 @@ function rightAccordion(measurements) {
             input.type = "checkbox";
             //input.id = "item-" + point.id + "-" + source;
             input.name = "small";
-            span1.innerHTML = point.id;
+            span1.innerHTML = point.name;
 
             label.appendChild(span1);
             fields.appendChild(field);
