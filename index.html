@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>epiviz-charts</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="bower_components/epiviz-charts/epiviz-scatter-plot.html">
+    <link rel="import" href="bower_components/epiviz-charts/epiviz-genes-track.html">
+    <link rel="import" href="bower_components/epiviz-charts/epiviz-line-track.html">
+    <link rel="import" href="bower_components/epiviz-charts/epiviz-blocks-track.html">
+    <link rel="import" href="bower_components/epiviz-charts/epiviz-heatmap-plot.html">
+    <link rel="import" href="bower_components/epiviz-charts/epiviz-line-plot.html">
+    <link rel="import" href="bower_components/epiviz-charts/epiviz-stacked-line-plot.html">
+    <link rel="import" href="bower_components/epiviz-charts/epiviz-stacked-line-track.html">
+
+    <link rel="import" href="bower_components/epiviz-data-source/epiviz-data-source.html">
+    <link rel="import" href="bower_components/epiviz-environment/epiviz-environment.html">
+
+    <link rel="stylesheet" href="src/browser/semantic/dist/semantic.min.css">
+    <link rel="stylesheet" href="src/browser/semantic-ui-range-master/range.css">
+    <link rel="stylesheet" href="src/browser/browser.css">
+
+    <script src="src/browser/semantic/dist/semantic.min.js"></script>
+    <script src="src/browser/semantic-ui-range-master/range.js"></script>
+    <script src="src/browser/lodash/dist/lodash.min.js"></script>
+    <script src="src/browser/actions.js"></script>
+    <script src="src/browser/rendering.js"></script>
+    <script src="src/browser/tablesort.js"></script>
+
+        <script>
+        // window.addEventListener('WebComponentsReady', function(e) {
+
+            function addChart(type) {
+
+                var self = this;
+
+                var datasource = document.querySelector("#umd");
+                var data = datasource.measurementSet;
+                var datasourceGroups = {};
+                data.foreach(function(m) {
+                    if (data.dataprovider && data.dataprovider != m.dataprovider()) { return; }
+                    if (data.annotation) {
+                        for (var key in data.annotation) {
+                        if (!data.annotation.hasOwnProperty(key)) { continue; }
+                        if (!m.annotation() || m.annotation()[key] != data.annotation[key]) { return; }
+                        }
+                    }       
+                    datasourceGroups[m.datasourceGroup()] = true;
+                });
+
+                initialize(Object.keys(datasourceGroups));
+                $('#sourcemodal').modal({
+                        closable: false,
+                        selector: {
+                            deny: '.ui.grey.button',
+                            approve: '.ui.blue.submit.button'
+                        },
+                        onDeny: function() {
+                            $('#sourcemodal').modal('hide');
+                            $('form').empty();
+                            $('#newmodal').remove();
+                            // $('#resultmodal').remove();
+                        },
+                        onApprove: function() {
+                            var source = $('#form').form('get value', 'source');
+                            var measurements = data.subset(function(m) { return m.datasourceGroup() === source });
+                            showModal(source, measurements.raw(), function(selected) {
+                                var mSet = new epiviz.measurements.MeasurementSet();
+                                var tmpMeasurements = [];
+
+                                for (var i = 0; i < selected.length; i++) {
+                                    var measurement = selected[i];
+                                    mSet.add(new epiviz.measurements.Measurement(
+                                        measurement.id,
+                                        measurement.name,
+                                        measurement.type,
+                                        measurement.datasourceId,
+                                        measurement.datasourceGroup,
+                                        measurement.dataprovider,
+                                        measurement.formula,
+                                        measurement.defaultChartType,
+                                        measurement.annotation,
+                                        measurement.minValue,
+                                        measurement.maxValue,
+                                        measurement.metadata
+                                    ));
+
+                                    tmpMeasurements.push(measurement);
+                                }
+
+                                var chart = document.createElement(type);
+                                chart.measurements = tmpMeasurements;
+                                chart.className="charts";
+
+                                var env = document.querySelector('#env');
+                                Polymer.dom(env).appendChild(chart);
+                                $('form').empty();
+                                $('#newmodal').remove();
+                                $('#resultmodal').remove();
+                            });
+                            $('#sourcemodal').modal('hide');
+
+                        }
+                });
+                $('#sourcemodal').modal('show');
+            }
+        // });
+    </script>
+</head>
+
+<body>
+    <h3>Epiviz Polymer KitchenSink</h3>
+    <button id="scatterPlot" type="button" onclick="addChart('epiviz-scatter-plot')">Add Scatter Plot</button>
+    <button id="lineTrack" type="button" onclick="addChart('epiviz-line-track')">Add Line Track</button>
+    <button id="geneTrack" type="button" onclick="addChart('epiviz-genes-track')">Add Gene Track</button>
+    <button id="sLineTrack" type="button" onclick="addChart('epiviz-stacked-line-track')">Add Stacked Line Track</button>
+    <button id="blockTrack" type="button" onclick="addChart('epiviz-blocks-track')">Add Block Track</button>
+    <button id="sLinePlot" type="button" onclick="addChart('epiviz-stacked-line-plot')">Add Stacked Line Plot</button>
+    <button id="heatmapPlot" type="button" onclick="addChart('epiviz-heatmap-plot')">Add HeatMap Plot</button>
+
+    <br/>
+
+    <epiviz-data-source id="umd" provider-type="epiviz.data.WebServerDataProvider" provider-id="umd" provider-url="http://epiviz.cbcb.umd.edu/data/main.php">
+    </epiviz-data-source>
+    <epiviz-environment 
+        id="env"
+        chr="chr6"
+        start="64076201"
+        end="65088740"
+        measurements=''>
+        <!--<epiviz-genes-track class="charts" dim-s='["genes"]'></epiviz-genes-track>
+        <epiviz-line-track class="charts" dim-s='["affy1", "affy2"]' dim-x="affy1" dim-y="affy2"></epiviz-line-track>
+        <epiviz-scatter-plot class="charts" dim-s='["affy1", "affy2"]' dim-x="affy1" dim-y="affy2"></epiviz-scatter-plot>
+        <epiviz-scatter-plot class="charts" dim-s='["affy4", "affy3"]' dim-x="affy1" dim-y="affy2"></epiviz-scatter-plot>
+        <epiviz-blocks-track class="charts" dim-s='["affy1", "affy3"]' dim-x="affy1" dim-y="affy2"></epiviz-blocks-track>
+        <epiviz-stacked-line-plot class="charts" dim-s='["affy2", "affy3"]' dim-x="affy1" dim-y="affy2"></epiviz-stacked-line-plot>
+        <epiviz-stacked-line-track class="charts" dim-s='["affy3", "affy1"]' dim-x="affy1" dim-y="affy2"></epiviz-stacked-line-track>-->
+        <!--<epiviz-heatmap-plot dim-s='["affy3", "affy2"]' dim-x="affy1" dim-y="affy2"></epiviz-heatmap-plot>-->
+    </epiviz-environment>
+</body>
+
+</html>
