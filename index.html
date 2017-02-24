@@ -38,6 +38,8 @@
 
                 var self = this;
 
+                selections = {};
+
                 var datasource = document.querySelector("#umd");
                 var data = datasource.measurementSet;
                 var datasourceGroups = {};
@@ -98,11 +100,11 @@
 
                                 var env = document.querySelector('#env');
                                 Polymer.dom(env).appendChild(chart);
-                                $('form').empty();
-                                $('#newmodal').remove();
-                                $('#resultmodal').remove();
+                                // $('form').empty();
+                                // $('#newmodal').remove();
+                                // $('#resultmodal').remove();
                             });
-                            $('#sourcemodal').modal('hide');
+                            // $('#sourcemodal').modal('hide');
 
                         }
                 });
