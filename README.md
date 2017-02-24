@@ -3,9 +3,12 @@
 # installation:
 
 download repo
-`bower update`
+```
+bower update
+```
 
-server index.html using any webserver! 
-
-`python -m SimpleHTTPServer`
-`php -S localhost:5566`
+serve index.html using any webserver! 
+```
+python -m SimpleHTTPServer (or)
+php -S localhost:5566
+```
