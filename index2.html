@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>epiviz-charts</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="bower_components/epiviz-charts/epiviz-scatter-plot.html">
+    <link rel="import" href="bower_components/epiviz-charts/epiviz-genes-track.html">
+    <link rel="import" href="bower_components/epiviz-charts/epiviz-line-track.html">
+    <link rel="import" href="bower_components/epiviz-charts/epiviz-blocks-track.html">
+    <link rel="import" href="bower_components/epiviz-charts/epiviz-heatmap-plot.html">
+    <link rel="import" href="bower_components/epiviz-charts/epiviz-line-plot.html">
+    <link rel="import" href="bower_components/epiviz-charts/epiviz-stacked-line-plot.html">
+    <link rel="import" href="bower_components/epiviz-charts/epiviz-stacked-line-track.html">
+
+    <link rel="import" href="bower_components/epiviz-data-source/epiviz-data-source.html">
+    <link rel="import" href="bower_components/epiviz-environment/epiviz-environment.html">
+
+    <!--<link rel="stylesheet" href="src/browser/semantic/dist/semantic.min.css">
+    <link rel="stylesheet" href="src/browser/semantic-ui-range-master/range.css">
+    <link rel="stylesheet" href="src/browser/browser.css">
+
+    <script src="src/browser/semantic/dist/semantic.min.js"></script>
+    <script src="src/browser/semantic-ui-range-master/range.js"></script>
+    <script src="src/browser/lodash/dist/lodash.min.js"></script>
+    <script src="src/browser/actions.js"></script>
+    <script src="src/browser/rendering.js"></script>
+    <script src="src/browser/tablesort.js"></script>-->
+
+    <link rel="stylesheet" href="node_modules/skeleton-css/css/normalize.css">
+    <link rel="stylesheet" href="node_modules/skeleton-css/css/skeleton.css">
+
+        <script>
+        // window.addEventListener('WebComponentsReady', function(e) {
+
+            function addChart(type) {
+
+                var self = this;
+                    var chart = document.createElement(type);
+                    chart.useDefaultDataProvider = true;
+                    chart.className="charts";
+
+                    var env = document.querySelector('#env');
+                    Polymer.dom(env).appendChild(chart);
+            }
+        // });
+    </script>
+</head>
+
+<body>
+    <h3>Epiviz Polymer KitchenSink</h3>
+    <button id="scatterPlot" type="button" onclick="addChart('epiviz-scatter-plot')">Add Scatter Plot</button>
+    <button id="lineTrack" type="button" onclick="addChart('epiviz-line-track')">Add Line Track</button>
+    <button id="geneTrack" type="button" onclick="addChart('epiviz-genes-track')">Add Gene Track</button>
+    <button id="sLineTrack" type="button" onclick="addChart('epiviz-stacked-line-track')">Add Stacked Line Track</button>
+    <button id="blockTrack" type="button" onclick="addChart('epiviz-blocks-track')">Add Block Track</button>
+    <button id="sLinePlot" type="button" onclick="addChart('epiviz-stacked-line-plot')">Add Stacked Line Plot</button>
+    <button id="heatmapPlot" type="button" onclick="addChart('epiviz-heatmap-plot')">Add HeatMap Plot</button>
+
+    <br/>
+
+    <epiviz-data-source id="umd" provider-type="epiviz.data.WebServerDataProvider" provider-id="umd" provider-url="http://epiviz.cbcb.umd.edu/data/main.php">
+    </epiviz-data-source>
+    <div classs="container">
+        <div class="row">
+            <div class="three columns">
+                <p>hello</p>
+            </div>
+            <div class="nine columns">
+                <epiviz-environment 
+                    id="env">
+                </epiviz-environment>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
